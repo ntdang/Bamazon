@@ -58,14 +58,14 @@ function displayItems() {
       .then(function (response) {
         var itemPicked = {};
         for (var i = 0; i < res.length; i++) {
-          if (res[i].id == response.id) {
+          if (res[i].id == response.itemId) {
             itemPicked = res[i];
           }
         }
-        if (response.units <= itemPicked.stock_quantity) {
+        if (response.quantity <= itemPicked.stock_quantity) {
           console.log("Thank you for your purchase!");
           //If in stock - update the SQL database to reflect the remaining quantity. Once the update goes through, show the customer the total cost of their purchase.
-          connection.query('UPDATE products SET stock_quantity = ? WHERE id = ?', [(itemPicked.stock_quantity - response.units), response.id], function (err, res) {
+          connection.query('UPDATE products SET stock_quantity = ? WHERE id = ?', [(itemPicked.stock_quantity - response.quantity), response.itemId], function (err, res) {
             if (err) throw err;
             console.log("Stock has been updated.");
           })
