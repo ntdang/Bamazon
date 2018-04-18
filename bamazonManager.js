@@ -18,6 +18,7 @@ connection.connect(function (err) {
   runOptions();
 });
 
+//options for manager function
 function runOptions() {
   inquirer
     .prompt({
@@ -52,6 +53,7 @@ function runOptions() {
     });
 }
 
+//displays products and all info
 function viewProducts() {
   connection.query("SELECT * FROM products", function (err, res) {
     if (err) throw err;
@@ -62,6 +64,7 @@ function viewProducts() {
   });
 }
 
+//shows products that have less than 5 in stock
 function lowInventory() {
   var query = "SELECT * FROM products WHERE stock_quantity < 5";
   connection.query(query, function (err, res) {
@@ -72,74 +75,90 @@ function lowInventory() {
   });
 }
 
-// function addInventory() {
-//   inquirer
-//     .prompt([{
-//         name: "start",
-//         type: "input",
-//         message: "Enter starting position: ",
-//         validate: function (value) {
-//           if (isNaN(value) === false) {
-//             return true;
-//           }
-//           return false;
-//         }
-//       },
-//       {
-//         name: "end",
-//         type: "input",
-//         message: "Enter ending position: ",
-//         validate: function (value) {
-//           if (isNaN(value) === false) {
-//             return true;
-//           }
-//           return false;
-//         }
-//       }
-//     ])
-//     .then(function (answer) {
-//       var query = "SELECT position,song,artist,year FROM top5000 WHERE position BETWEEN ? AND ?";
-//       connection.query(query, [answer.start, answer.end], function (err, res) {
-//         for (var i = 0; i < res.length; i++) {
-//           console.log(
-//             "Position: " +
-//             res[i].position +
-//             " || Song: " +
-//             res[i].song +
-//             " || Artist: " +
-//             res[i].artist +
-//             " || Year: " +
-//             res[i].year
-//           );
-//         }
-//         runOptions();
-//       });
-//     });
-// }
+//lets manager add inventory to product of choice
+function addInventory() {
+  connection.query("SELECT * FROM products", function (err, res) {
+    if (err) throw err;
+    // Log all results of the SELECT statement
+    // console.log(res);
+
+    var productsArr = [];
+    for (var i = 0; i < res.length; i++) {
+      productsArr.push(res[i].product_name);
+    }
+
+    inquirer
+      .prompt([{
+          name: 'add',
+          message: 'Which product would you like to add more of?',
+          type: 'list',
+          choices: productsArr
+        },
+        {
+          name: 'howMany',
+          message: 'How many do you want to add?',
+          type: 'input',
+          default: 1,
+          validate: function (value) {
+            if (isNaN(value) === false) {
+              return true;
+            }
+            return false;
+          }
+        }
+      ])
+      .then(function (choice) {
+        var itemPicked = {};
+        for (var i = 0; i < res.length; i++) {
+          if (res[i].product_name === choice.add) {
+            itemPicked = res[i];
+          }
+        };
+        // console.log(itemPicked);
+        //update the inventory of that selected item
+        console.log("Stock for this product has been updated.");
+        connection.query('UPDATE products SET stock_quantity = ' + (itemPicked.stock_quantity + parseInt(choice.howMany)) + ' WHERE id = ' + itemPicked.id, function (err, res) {
+          if (err) throw err;
+          // console.log(res.affectedRows);
+        })
+        runOptions();
+      });
+  });
+}
 
 // function newProduct() {
 //   inquirer
-//     .prompt({
-//       name: "song",
-//       type: "input",
-//       message: "What song would you like to look for?"
+//     .prompt([{
+//         name: 'name',
+//         message: 'What product do you want to add?',
+//         type: 'input',
+//         default: 'Computer'
+//       },
+//       {
+//         name: 'category',
+//         message: 'What category is this item?',
+//         type: 'list',
+//         choices: ['Electronics', 'Clothing', 'Beauty', 'Shoes', 'Other']
+//       },
+//       {
+//         name: 'startingBid',
+//         message: 'What is the starting bid?',
+//         type: 'input',
+//         default: 5
+//       }
+//     ])
+//     .then(function (data) {
+//       console.log("Inserting a new item...\n");
+//       var query = connection.query(
+//         "INSERT INTO auctions SET ?", {
+//           item_name: data.name,
+//           category: data.category,
+//           starting_bid: data.startingBid,
+//           highest_bid: data.startingBid
+//         },
+//         function (err, res) {
+//           console.log(res.affectedRows + " item inserted!\n");
+//         }
+//       )
 //     })
-//     .then(function (answer) {
-//       console.log(answer.song);
-//       connection.query("SELECT * FROM top5000 WHERE ?", {
-//         song: answer.song
-//       }, function (err, res) {
-//         console.log(
-//           "Position: " +
-//           res[0].position +
-//           " || Song: " +
-//           res[0].song +
-//           " || Artist: " +
-//           res[0].artist +
-//           " || Year: " +
-//           res[0].year
-//         );
-//         runOptions();
-//       });
-//     });
 // }
