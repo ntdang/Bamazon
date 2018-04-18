@@ -71,7 +71,7 @@ function displayItems() {
               console.log("Stock has been updated.");
             })
           } else {
-            //If not in stock, console not enough message
+            //If not enough in stock, console not enough message
             console.log("Sorry! Not enough product in stock.")
           }
         });
