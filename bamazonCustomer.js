@@ -26,38 +26,47 @@ function displayItems() {
   connection.query("SELECT * FROM products", function (err, res) {
     if (err) throw err;
     for (var i = 0; i < res.length; i++) {
-      console.log("ID " + res[i].id + " || " + "Product: " + res[i].product_name + " || " + "Price : $" + res[i].price);
+      console.log("ID#: " + res[i].id + " || " + "Product: " + res[i].product_name + " || " + "Price : $" + res[i].price);
     }
-    //inquirer prompt asking what product user wants to buy and how many
+    //inquirer prompts asking what product user wants to buy and how many
     inquirer
       .prompt([{
           //ask for ID of product they want to buy
-          name: 'id',
-          message: 'What is the ID of the product you want to buy?',
+          name: 'itemId',
+          message: 'What is the ID# of the product you want to buy?',
           type: 'input',
-          default: 1
+          validate: function (value) {
+            if (isNaN(value) === false) {
+              return true;
+            }
+            return false;
+          }
         },
         {
           //ask how many they want to buy
-          name: 'units',
+          name: 'quantity',
           message: 'How many would you like to buy?',
           type: 'input',
-          default: 1
+          validate: function (value) {
+            if (isNaN(value) === false) {
+              return true;
+            }
+            return false;
+          }
         }
       ])
       .then(function (response) {
-        var itemPicked = {};
-        console.log(response);
-        for (var i = 0; i < res.length; i++) {
-          if (res[i].id === response.id) {
-            itemPicked = res[i];
+        var itemPicked = res[0];
+        connection.query("SELECT stock_quantity FROM products WHERE id ='" + response.itemId + "'", function (err, res) {
+          if (err) throw err;
+          console.log(res[0]);
+          if (response.quantity > itemPicked.stock_quantity) {
+            console.log("Sorry! Not enough product in stock!");
+          } else {
+            console.log("Thank you for your purchase!");
+            // connection.query("UPDATE products SET ? WHERE ?")
           }
-        };
-        console.log(itemPicked);
-
-        if (itemPicked.stock_quantity < response.units) {
-          console.log("Sorry! Insufficient quantity!");
-        }
-      })
-  });
-};
+        })
+      });
+  })
+}
