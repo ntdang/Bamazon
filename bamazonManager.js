@@ -51,7 +51,7 @@ function runOptions() {
           break;
       }
     });
-}
+};
 
 //displays products and all info
 function viewProducts() {
@@ -62,7 +62,7 @@ function viewProducts() {
     }
     runOptions();
   });
-}
+};
 
 //shows products that have less than 5 in stock
 function lowInventory() {
@@ -73,15 +73,13 @@ function lowInventory() {
     }
     runOptions();
   });
-}
+};
 
 //lets manager add inventory to product of choice
 function addInventory() {
   connection.query("SELECT * FROM products", function (err, res) {
     if (err) throw err;
-    // Log all results of the SELECT statement
     // console.log(res);
-
     var productsArr = [];
     for (var i = 0; i < res.length; i++) {
       productsArr.push(res[i].product_name);
@@ -124,41 +122,48 @@ function addInventory() {
         runOptions();
       });
   });
-}
+};
 
-// function newProduct() {
-//   inquirer
-//     .prompt([{
-//         name: 'name',
-//         message: 'What product do you want to add?',
-//         type: 'input',
-//         default: 'Computer'
-//       },
-//       {
-//         name: 'category',
-//         message: 'What category is this item?',
-//         type: 'list',
-//         choices: ['Electronics', 'Clothing', 'Beauty', 'Shoes', 'Other']
-//       },
-//       {
-//         name: 'startingBid',
-//         message: 'What is the starting bid?',
-//         type: 'input',
-//         default: 5
-//       }
-//     ])
-//     .then(function (data) {
-//       console.log("Inserting a new item...\n");
-//       var query = connection.query(
-//         "INSERT INTO auctions SET ?", {
-//           item_name: data.name,
-//           category: data.category,
-//           starting_bid: data.startingBid,
-//           highest_bid: data.startingBid
-//         },
-//         function (err, res) {
-//           console.log(res.affectedRows + " item inserted!\n");
-//         }
-//       )
-//     })
-// }
+//lets manager add a new product into store
+function newProduct() {
+  inquirer
+    .prompt([{
+        name: 'new',
+        message: 'What new product do you want to add?',
+        type: 'input',
+        default: 'Computer'
+      },
+      {
+        name: 'department',
+        message: 'What department does the product go under?',
+        type: 'input',
+        default: 'Electronics'
+      },
+      {
+        name: 'price',
+        message: 'How much is the product?',
+        type: 'input',
+        default: 5
+      },
+      {
+        name: 'stock',
+        message: 'How many are in stock?',
+        type: 'input',
+        default: 1
+      }
+    ])
+    .then(function (data) {
+      console.log("Inserting a new item...\n");
+      var query = connection.query(
+        "INSERT INTO products SET ?", {
+          product_name: data.new,
+          department_name: data.department,
+          price: data.price,
+          stock_quantity: data.stock
+        },
+        function (err, res) {
+          console.log(res.affectedRows + " item inserted!\n");
+        }
+      )
+    });
+};
