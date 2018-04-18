@@ -62,15 +62,15 @@ function viewProducts() {
   });
 }
 
-// function lowInventory() {
-//   var query = "SELECT artist FROM top5000 GROUP BY artist HAVING count(*) > 1";
-//   connection.query(query, function (err, res) {
-//     for (var i = 0; i < res.length; i++) {
-//       console.log(res[i].artist);
-//     }
-//     runOptions();
-//   });
-// }
+function lowInventory() {
+  var query = "SELECT * FROM products WHERE stock_quantity < 5";
+  connection.query(query, function (err, res) {
+    for (var i = 0; i < res.length; i++) {
+      console.log("Product: " + res[i].product_name + " || " + "In stock: " + res[i].stock_quantity);
+    }
+    runOptions();
+  });
+}
 
 // function addInventory() {
 //   inquirer
