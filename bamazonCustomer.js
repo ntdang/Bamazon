@@ -55,26 +55,40 @@ function displayItems() {
           }
         }
       ])
-      .then(function (response) {
-        var itemPicked = res[0];
-        var query = "SELECT stock_quantity FROM products WHERE id ='" + response.itemId + "'";
-        connection.query(query, function (err, res) {
-          if (err) throw err;
-          console.log(res);
-          if (res.length === 0) {
-            console.log("Error");
-          } else if (response.quantity <= itemPicked.stock_quantity) {
-            console.log("Thank you for your purchase!");
-            //If in stock - update the SQL database to reflect the remaining quantity. Once the update goes through, show the customer the total cost of their purchase.
-            connection.query('UPDATE products SET stock_quantity = ' + (itemPicked.stock_quantity - response.quantity) + ' WHERE id = ' + response.itemId, function (err, res) {
-              if (err) throw err;
-              console.log("Stock has been updated.");
-            })
-          } else {
-            //If not enough in stock, console not enough message
-            console.log("Sorry! Not enough product in stock.")
-          }
-        });
+      .then(function (choice) {
+        var itemPicked = {};
+        // console.log(choice.itemId);
+        console.log(itemPicked.stock_quantity);
+        //update the inventory of that selected item
+        // console.log("Stock for this product has been updated.");
+        // connection.query('UPDATE products SET stock_quantity = ' + (itemPicked.stock_quantity - parseInt(choice.quantity)) + ' WHERE id = ' + itemPicked.id, function (err, res) {
+        //   if (err) throw err;
+        //   // console.log(res.affectedRows);
+        // })
       });
+
+
+      
+      // .then(function (response) {
+      //   var itemPicked = res[0];
+      //   var query = "SELECT stock_quantity FROM products WHERE id ='" + response.itemId + "'";
+      //   connection.query(query, function (err, res) {
+      //     if (err) throw err;
+      //     console.log(res);
+      //     if (res.length === 0) {
+      //       console.log("Error");
+      //     } else if (response.quantity <= itemPicked.stock_quantity) {
+      //       console.log("Thank you for your purchase!");
+      //       //If in stock - update the SQL database to reflect the remaining quantity. Once the update goes through, show the customer the total cost of their purchase.
+      //       connection.query('UPDATE products SET stock_quantity = ' + (itemPicked.stock_quantity - response.quantity) + ' WHERE id = ' + response.itemId, function (err, res) {
+      //         if (err) throw err;
+      //         console.log("Stock has been updated.");
+      //       })
+      //     } else {
+      //       //If not enough in stock, console not enough message
+      //       console.log("Sorry! Not enough product in stock.")
+      //     }
+      //   });
+      // });
   });
 };
