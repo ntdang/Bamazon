@@ -64,10 +64,17 @@ function displayItems() {
         }
         if (response.quantity <= itemPicked.stock_quantity) {
           console.log("Thank you for your purchase! Your total is: $" + parseInt(itemPicked.price * response.quantity));
+          var totalCost = parseInt(itemPicked.price * response.quantity);
+          console.log("Total price is: $" + totalCost);
           //If in stock - update the SQL database to reflect the remaining quantity. Once the update goes through, show the customer the total cost of their purchase.
           connection.query('UPDATE products SET stock_quantity = ? WHERE id = ?', [(itemPicked.stock_quantity - response.quantity), response.itemId], function (err, res) {
-            if (err) throw err;
+            if (err) throw err;  
             // console.log("Stock has been updated.");
+            //update product sales
+            connection.query('UPDATE products SET product_sales = ? WHERE id = ?', [(itemPicked.product_sales + totalCost), response.itemId], function (err, res) {
+              if (err) throw err;
+              console.log(res.affectedRows);
+            });
           })
         } else {
           //If not enough in stock, console not enough message

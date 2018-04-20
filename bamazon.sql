@@ -10,6 +10,7 @@ CREATE TABLE products(
   department_name VARCHAR(100) NOT NULL,
   price DECIMAL(10,2) default 0 NOT NULL,
   stock_quantity INT default 0 NOT NULL,
+  product_sales INT NULL,
   PRIMARY KEY (id)
 );
 
@@ -26,3 +27,19 @@ VALUES
   ("Mosiso Macbook Air case", "Electronics", 15.99, 2),
   ("Wireless Mouse", "Electronics", 8.59, 1),
   ("Plaid Blanket Scarf", "Clothing", 12.79, 3);
+
+  CREATE TABLE departments(
+  department_id INT NOT NULL AUTO_INCREMENT,
+  department_name VARCHAR(100),
+  over_head_costs INT NULL,
+  PRIMARY KEY (department_id)
+);
+
+INSERT INTO 
+  departments (department_name, over_head_costs)
+VALUES 
+  ("Home & Kitchen", 11000), 
+  ("Books", 13000), 
+  ("Clothing", 30000),
+  ("Beauty & Personal Care", 40000),
+  ("Electronics", 75000);

@@ -153,7 +153,7 @@ function newProduct() {
       }
     ])
     .then(function (data) {
-      console.log("Inserting a new item...\n");
+      console.log("Added a new product...\n");
       var query = connection.query(
         "INSERT INTO products SET ?", {
           product_name: data.new,
@@ -162,8 +162,9 @@ function newProduct() {
           stock_quantity: data.stock
         },
         function (err, res) {
-          console.log(res.affectedRows + " item inserted!\n");
+          if (err) throw err;
         }
-      )
+      );
+      runOptions();
     });
 };
